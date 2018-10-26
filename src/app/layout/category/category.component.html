@@ -1,0 +1,67 @@
+<span>
+  <label><a href="">Confirmed</a> </label>&nbsp;
+  <label> | </label>&nbsp; 
+  <label><a href="">Unconfirmed</a> </label>
+</span>
+<hr/>
+<kendo-grid #grid="kendoGrid" [kendoGridBinding]="products" 
+   [resizable]="true"
+   [pageable]="true" [pageSize]="10" 
+   [height]="600"
+   [selectable]="true"
+   (cellClick)="isSelected($event)"
+   (edit)="editHandler($event)" (remove)="removeHandler($event)"
+          (add)="addHandler($event)">
+            <ng-template kendoGridToolbarTemplate>
+                <!--<button kendoGridPDFCommand icon="file-pdf">Export to PDF</button>-->
+                <button (click)="exportToPDF(grid)">Export Grid to PDF</button>
+                <button kendoGridExcelCommand icon="file-excel">Export to Excel</button>
+                <button kendoGridAddCommand>Add New</button>
+            </ng-template>
+            <ng-container *ngFor="let column of columnsDisplayed">
+            <kendo-grid-column
+              [field]="column.field" 
+              [title]="column.title" 
+              [width]="column.width"
+              [locked]="column.locked">
+            </kendo-grid-column>
+            <!--<ng-template kendoGridDetailTemplate let-dataItem>
+              <p><strong>Sample</strong></p>
+            </ng-template>-->
+          </ng-container>
+          <kendo-grid-command-column title="Command" width="200">
+            <ng-template kendoGridCellTemplate>
+              <!--<button (click)="viewHandler($event)">View</button>-->
+              <button kendoGridEditCommand [primary]="true">Edit</button>
+              <button kendoGridRemoveCommand>Delete</button>
+             </ng-template>
+          </kendo-grid-command-column>
+            <kendo-grid-pdf fileName="Products.pdf" [allPages]="true" paperSize="A4" [repeatHeaders]="true" [landscape]="true">
+                <kendo-grid-pdf-margin top="2cm" left="1cm" right="1cm" bottom="2cm"></kendo-grid-pdf-margin>
+                <ng-container *ngFor="let column of columnsToPrint">
+            <kendo-grid-column
+              [field]="column.field" 
+              [title]="column.title" 
+            >
+            </kendo-grid-column>
+          </ng-container>                
+                <ng-template kendoGridPDFTemplate let-pageNum="pageNum" let-totalPages="totalPages">
+                 <div class="page-template">
+                    <div class="header">
+                      <div style="float: right">Page {{ pageNum }} of {{ totalPages }}</div>
+                      Multi-page grid with automatic page breaking
+                    </div>
+                    <div class="footer">
+                      Page {{ pageNum }} of {{ totalPages }}
+                    </div>
+                  </div>
+                </ng-template>
+            </kendo-grid-pdf>
+            <kendo-grid-excel fileName="Products.xlsx"></kendo-grid-excel> 
+        </kendo-grid>
+
+<kendo-grid-edit-form [model]="editDataItem" [isNew]="isNew"
+    (save)="saveHandler($event)"
+    (edit)="updateHandler($event)"
+    (cancel)="cancelHandler($event)">
+</kendo-grid-edit-form>   
